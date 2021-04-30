@@ -66,6 +66,8 @@ function detect_os(){
     msg info "OS detected : Fedora"
   elif echo "$OS_DETECTED" | grep -q "centos"; then
     msg info "OS detected : Centos"
+  elif echo "$OS_DETECTED" | grep -q "arch"; then
+    msg info "OS detected : Archlinux"
   else
     if $CONTINUE_ON_UNDETECTED_OS; then
       msg info "Unable to detect os"
