@@ -1,0 +1,12 @@
+[Unit]
+Description=My script after network available
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=<path>/script.sh
+
+[Install]
+WantedBy=multi-user.target
