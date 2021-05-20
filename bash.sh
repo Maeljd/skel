@@ -58,15 +58,15 @@ function msg(){
 }
 
 function detect_os(){
-  if echo "$OS_DETECTED" | grep -q "debian"; then
+  if echo [[ "$OS_DETECTED" == "debian" ]]; then
     msg info "OS detected : Debian"
-  elif echo "$OS_DETECTED" | grep -q "ubuntu"; then
+  elif echo [[ "$OS_DETECTED" == "ubuntu" ]]; then
     msg info "OS detected : Ubuntu"
-  elif echo "$OS_DETECTED" | grep -q "fedora"; then
+  elif echo [[ "$OS_DETECTED" == "fedora" ]]; then
     msg info "OS detected : Fedora"
-  elif echo "$OS_DETECTED" | grep -q "centos"; then
+  elif echo [[ "$OS_DETECTED" == "centos" ]]; then
     msg info "OS detected : Centos"
-  elif echo "$OS_DETECTED" | grep -q "arch"; then
+  elif echo [[ "$OS_DETECTED" == "arch" ]]; then
     msg info "OS detected : Archlinux"
   else
     if $CONTINUE_ON_UNDETECTED_OS; then
