@@ -70,7 +70,9 @@ function detect_os(){
     msg info "OS detected : Archlinux"
   else
     if $CONTINUE_ON_UNDETECTED_OS; then
-      msg info "Unable to detect os"
+      msg warn "Unable to detect os. Keep going anyway in 5s"
+      sleep 5
+      main
     else
       msg ko "Unable to detect os and CONTINUE_ON_UNDETECTED_OS is set to false"
       exit 1
