@@ -49,6 +49,7 @@ blablablabla
   Usage:
         $0 --help
 
+    -d  |  --debug             Do nothing dangerous, only call debug function
     -h  |  --help              Show this help
 EOF
 }
