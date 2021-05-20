@@ -1,26 +1,43 @@
 #!/bin/bash
 ###
 #
-# Author: Maël
+# Author: snax44
 # Date:
 # Version: 1.0
 # Desc:
 ###
 #############
 ### Variables
-DEBUG=false
-OS_DETECTED="$(awk '/^ID=/' /etc/*-release | awk -F'=' '{ print tolower($2) }')"
-CONTINUE_ON_UNDETECTED_OS=false
-USER_ID=$(id -u)
-REQUIRE_ROOT=false
-REQUIRE_OPTION=false
+
+# To personnalize
+DEBUG=false                                                                                         # Set to true to go directly in debug function after option parsing
+REQUIRE_ROOT=false                                                                                  # Set to true if this script need to be run as root
+REQUIRE_OPTION=false                                                                                # Set to true if this script cannot be ran without any options
+CONTINUE_ON_UNDETECTED_OS=false                                                                     # Script will continue even if the has not been correctly detected
+MY_REPO_URL=""                                                                                      # Put here link to the git repository
+
+###
+OS_DETECTED="$(awk '/^ID=/' /etc/*-release 2> /dev/null | awk -F'=' '{ print tolower($2) }' )"      # Get the os name
+USER_ID=$(id -u)                                                                                    # Nothing to say here
+
 
 #####################
 ### Commons functions
+# Basic function that will be call if DEBUG is set to true
+
 function debug(){
   cat << EOF
-  OS Detected     : $OS_DETECTED
-  User ID         : $USER_ID
+
+  Debug mode:
+  -----------------------------
+  Require root              : $REQUIRE_ROOT
+  Require options           : $REQUIRE_OPTION
+  Continue on undetected OS : $CONTINUE_ON_UNDETECTED_OS
+  Git Link                  : $MY_REPO_URL
+  OS Detected               : $OS_DETECTED
+  User ID                   : $USER_ID
+  -----------------------------
+
 EOF
 }
 
@@ -37,6 +54,8 @@ EOF
 }
 
 function msg(){
+  # Call this function to print a beautifull colored message
+  # Ex: msg ko "This is an error"
 
   local GREEN="\\033[1;32m"
   local NORMAL="\\033[0;39m"
@@ -58,15 +77,19 @@ function msg(){
 }
 
 function detect_os(){
-  if echo [[ "$OS_DETECTED" == "debian" ]]; then
+  # Do what you want or need accoring the detected os
+  # By default this will just print an info message with then OS name.
+  # You just have to write not_supported_os in one of the following if do make it not compatible
+
+  if [[ "$OS_DETECTED" == "debian" ]]; then
     msg info "OS detected : Debian"
-  elif echo [[ "$OS_DETECTED" == "ubuntu" ]]; then
+  elif [[ "$OS_DETECTED" == "ubuntu" ]]; then
     msg info "OS detected : Ubuntu"
-  elif echo [[ "$OS_DETECTED" == "fedora" ]]; then
+  elif [[ "$OS_DETECTED" == "fedora" ]]; then
     msg info "OS detected : Fedora"
-  elif echo [[ "$OS_DETECTED" == "centos" ]]; then
+  elif [[ "$OS_DETECTED" == "centos" ]]; then
     msg info "OS detected : Centos"
-  elif echo [[ "$OS_DETECTED" == "arch" ]]; then
+  elif [[ "$OS_DETECTED" == "arch" ]]; then
     msg info "OS detected : Archlinux"
   else
     if $CONTINUE_ON_UNDETECTED_OS; then
@@ -78,6 +101,13 @@ function detect_os(){
       exit 1
     fi
   fi
+
+  function not_supported_os(){
+    msg ko "Oops This OS is not supported yet !"
+    echo "    Do not hesitate to contribute for a better compatibility
+              $MY_REPO_URL"
+    exit 1
+  }
 }
 
 #################
@@ -100,6 +130,7 @@ if [[ $# -eq 0 ]] && $REQUIRE_OPTION; then
   exit 1
 fi
 
+# Parsing positional option and arguments
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -107,10 +138,10 @@ while [[ $# -gt 0 ]]; do
       usage
       exit 0
       ;;
-#    -u | --user)
-#      USER="$2"
-#      shift 2
-#      ;;
+    -d | --debug)
+      DEBUG=true
+      shift 1
+      ;;
       *)
       msg ko "$1 : Unkown option"
       usage
